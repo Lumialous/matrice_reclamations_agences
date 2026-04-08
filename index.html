@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrice Réclamations – Produits Digitaux | Orabank</title>
+<style>
+  /* ── CHARTE ORABANK ───────────────────────────────────────────── */
+  :root {
+    --or-vert-fonce:   #00693e;
+    --or-vert-vif:     #2eb135;
+    --or-noir:         #1a171b;
+    --or-mauve:        #8a697c;
+    --or-brun:         #8e684c;
+
+    /* Dérivés fonctionnels */
+    --bg:              #f4f7f4;
+    --surface:         #ffffff;
+    --surface2:        #f0f7f2;
+    --border:          #d4e8db;
+    --border-strong:   #a8d4b8;
+
+    --accent:          #00693e;
+    --accent-hover:    #005533;
+    --accent-light:    #e6f4ed;
+    --accent-vif:      #2eb135;
+    --accent-vif-light:#eaf7ea;
+
+    --text:            #1a171b;
+    --text-muted:      #6b7a70;
+    --text-dim:        #4a5c50;
+    --text-on-dark:    #ffffff;
+
+    --warn:            #b45309;
+    --warn-light:      #fef3c7;
+    --danger:          #b91c1c;
+    --danger-light:    #fee2e2;
+    --info:            #1e5a8e;
+    --info-light:      #e8f0fa;
+
+    --sans: 'Segoe UI', 'Calibri', Arial, sans-serif;
+    --mono: 'Consolas', 'Courier New', monospace;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 3px rgba(0,105,62,0.08);
+    --shadow-md: 0 4px 12px rgba(0,105,62,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── HEADER ──────────────────────────────────────────────────── */
+  header {
+    background: var(--or-vert-fonce);
+    border-bottom: 3px solid var(--or-vert-vif);
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-emblem {
+    width: 40px; height: 40px;
+    background: #ffffff;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+  }
+
+  /* Emblème SVG Orabank stylisé */
+  .logo-emblem svg { width: 26px; height: 26px; }
+
+  .logo-info { display: flex; flex-direction: column; }
+
+  .logo-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+
+  .logo-tagline {
+    font-size: 10px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+  }
+
+  .header-center {
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    text-align: center;
+  }
+
+  .header-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.95);
+    letter-spacing: 0.03em;
+  }
+
+  .header-subtitle {
+    font-size: 10px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 1px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .version-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.1);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.05em;
+  }
+
+  .confidential-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--or-vert-fonce);
+    background: #ffffff;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ── BARRE FILTRES ───────────────────────────────────────────── */
+  .controls {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    padding: 12px 28px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .controls-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 220px;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 8px 14px 8px 36px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-box input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,105,62,0.1);
+  }
+
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .filter-sep {
+    width: 1px; height: 24px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+
+  .filter-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 7px 14px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .filter-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--surface);
+    background: var(--accent);
+    font-weight: 600;
+  }
+
+  .filter-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── LAYOUT ──────────────────────────────────────────────────── */
+  .main {
+    display: flex;
+    height: calc(100vh - 118px);
+  }
+
+  /* ── SIDEBAR ─────────────────────────────────────────────────── */
+  .sidebar {
+    width: 268px;
+    min-width: 268px;
+    background: var(--surface);
+    border-right: 2px solid var(--border);
+    overflow-y: auto;
+    padding: 16px 0 16px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    padding: 0 16px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+
+  .sidebar-section { padding: 0 10px; margin-bottom: 2px; }
+
+  .product-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1.5px solid transparent;
+    margin-bottom: 2px;
+  }
+
+  .product-item:hover {
+    background: var(--accent-light);
+    border-color: var(--border-strong);
+  }
+
+  .product-item.selected {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+
+  .product-item.selected .product-name { color: var(--accent); font-weight: 600; }
+
+  .product-icon {
+    width: 34px; height: 34px;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+
+  .product-item.selected .product-icon {
+    background: var(--accent-light);
+    border-color: var(--border-strong);
+  }
+
+  .product-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .product-count {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--surface);
+    background: var(--accent);
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  /* ── CONTENU ─────────────────────────────────────────────────── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    background: var(--bg);
+  }
+
+  /* ── EN-TÊTE PRODUIT ─────────────────────────────────────────── */
+  .product-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .product-header-icon {
+    width: 52px; height: 52px;
+    border-radius: var(--radius-lg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    background: var(--accent-light);
+    border: 2px solid var(--border-strong);
+  }
+
+  .product-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--or-vert-fonce);
+    margin-bottom: 4px;
+  }
+
+  .product-desc {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    max-width: 580px;
+    line-height: 1.5;
+  }
+
+  .quick-stats {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-left: auto;
+    align-self: flex-start;
+  }
+
+  .stat-pill {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+
+  .tag-reclamation { background: var(--danger-light); color: var(--danger); border-color: rgba(185,28,28,0.2); }
+  .tag-incident    { background: var(--warn-light);   color: var(--warn);   border-color: rgba(180,83,9,0.2); }
+  .tag-demande     { background: var(--info-light);   color: var(--info);   border-color: rgba(30,90,142,0.2); }
+  .tag-info        { background: var(--accent-vif-light); color: #1a6b1e; border-color: rgba(46,177,53,0.2); }
+
+  /* ── CARDS SCÉNARIOS ─────────────────────────────────────────── */
+  .scenarios-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .scenario-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .scenario-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); }
+  .scenario-card.open  { border-color: var(--accent); }
+
+  .scenario-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+    transition: background 0.15s;
+  }
+
+  .scenario-card.open .scenario-header { background: var(--accent-light); }
+  .scenario-header:hover { background: var(--surface2); }
+  .scenario-card.open .scenario-header:hover { background: var(--accent-light); }
+
+  /* Types de requête */
+  .scenario-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 3px 9px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    border: 1px solid;
+  }
+
+  .type-reclamation { background: var(--danger-light); color: var(--danger); border-color: rgba(185,28,28,0.25); }
+  .type-demande     { background: var(--info-light);   color: var(--info);   border-color: rgba(30,90,142,0.25); }
+  .type-incident    { background: var(--warn-light);   color: var(--warn);   border-color: rgba(180,83,9,0.25); }
+  .type-information { background: var(--accent-vif-light); color: #1a6b1e; border-color: rgba(46,177,53,0.25); }
+
+  .scenario-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.3;
+  }
+
+  .scenario-card.open .scenario-title { color: var(--or-vert-fonce); }
+
+  /* Badges SLA */
+  .sla-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 9px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    white-space: nowrap;
+    border: 1px solid;
+  }
+
+  .sla-fast   { background: var(--accent-vif-light); color: #155e1a; border-color: rgba(46,177,53,0.3); }
+  .sla-medium { background: var(--warn-light);       color: var(--warn); border-color: rgba(180,83,9,0.3); }
+  .sla-slow   { background: var(--danger-light);     color: var(--danger); border-color: rgba(185,28,28,0.3); }
+
+  .chevron {
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  .scenario-card.open .chevron { transform: rotate(90deg); color: var(--accent); }
+
+  /* ── CORPS DÉROULÉ ───────────────────────────────────────────── */
+  .scenario-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1.5px solid var(--border);
+    background: var(--surface);
+  }
+
+  .scenario-card.open .scenario-body { display: block; }
+
+  .steps-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .step-block {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    border-top-width: 3px;
+  }
+
+  /* Couleurs des colonnes étapes */
+  .step-block.prereqs  { border-top-color: var(--or-mauve); }
+  .step-block.verif    { border-top-color: var(--warn); }
+  .step-block.n1       { border-top-color: var(--or-vert-fonce); }
+  .step-block.n2       { border-top-color: var(--info); }
+
+  .step-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .step-block.prereqs .step-label { color: var(--or-mauve); }
+  .step-block.verif   .step-label { color: var(--warn); }
+  .step-block.n1      .step-label { color: var(--or-vert-fonce); }
+  .step-block.n2      .step-label { color: var(--info); }
+
+  .step-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .step-block.prereqs .step-dot { background: var(--or-mauve); }
+  .step-block.verif   .step-dot { background: var(--warn); }
+  .step-block.n1      .step-dot { background: var(--or-vert-fonce); }
+  .step-block.n2      .step-dot { background: var(--info); }
+
+  .step-block ul { list-style: none; padding: 0; }
+
+  .step-block ul li {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    line-height: 1.45;
+  }
+
+  .step-block ul li:last-child { border-bottom: none; }
+
+  .step-block ul li::before {
+    content: '›';
+    color: var(--text-muted);
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+
+  /* Règle d'escalade */
+  .escalade-note {
+    margin-top: 12px;
+    background: #fff8e6;
+    border: 1.5px solid #f0c040;
+    border-left: 4px solid var(--warn);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #7a4a00;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  .escalade-note strong { color: var(--warn); }
+
+  /* ── ÉCRAN D'ACCUEIL ─────────────────────────────────────────── */
+  .welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .welcome-emblem {
+    width: 80px; height: 80px;
+    background: var(--accent-light);
+    border: 2px solid var(--border-strong);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    opacity: 0.7;
+  }
+
+  .welcome h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--or-vert-fonce);
+  }
+
+  .welcome p {
+    font-size: 13px;
+    color: var(--text-muted);
+    max-width: 340px;
+    line-height: 1.6;
+  }
+
+  .welcome-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-top: 4px;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────────────────── */
+  .app-footer {
+    background: var(--or-noir);
+    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+    text-align: center;
+    padding: 8px 24px;
+    letter-spacing: 0.04em;
+    border-top: 2px solid var(--or-vert-fonce);
+  }
+
+  .app-footer span { color: rgba(255,255,255,0.8); font-weight: 600; }
+
+  /* ── DIVERS ──────────────────────────────────────────────────── */
+  .no-results {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* ── PRINT ───────────────────────────────────────────────────── */
+  @media print {
+    header, .controls, .sidebar, .app-footer { display: none; }
+    .main { height: auto; }
+    .content { padding: 0; }
+    .scenario-body { display: block !important; }
+    body { background: #fff; }
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .steps-row { grid-template-columns: 1fr 1fr; }
+    .sidebar { display: none; }
+    .header-center { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-emblem">
+      <!-- Emblème O stylisé Orabank -->
+      <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="13" cy="13" r="11" stroke="#00693e" stroke-width="3" fill="none"/>
+        <circle cx="13" cy="13" r="5" fill="#2eb135"/>
+      </svg>
+    </div>
+    <div class="logo-info">
+      <div class="logo-name">Orabank</div>
+      <div class="logo-tagline">Togo · Direction Banque Digitale</div>
+    </div>
+  </div>
+
+  <div class="header-center">
+    <div class="header-title">Matrice de Prise en Charge des Réclamations</div>
+    <div class="header-subtitle">Produits Digitaux — Réseau Agences</div>
+  </div>
+
+  <div class="header-right">
+    <span class="version-badge">V1.0 · DBD 2025</span>
+    <span class="confidential-badge">Confidentiel</span>
+  </div>
+</header>
+
+<!-- ══ FILTRES ═════════════════════════════════════════════════════ -->
+<div class="controls">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Rechercher un scénario, mot-clé, produit..." oninput="filterAll()">
+  </div>
+  <div class="filter-sep"></div>
+  <span class="controls-label">Filtrer :</span>
+  <button class="filter-btn active" onclick="filterType('all', this)">Tous</button>
+  <button class="filter-btn" onclick="filterType('reclamation', this)">
+    <div class="filter-dot" style="background:#b91c1c"></div>Réclamation
+  </button>
+  <button class="filter-btn" onclick="filterType('incident', this)">
+    <div class="filter-dot" style="background:#b45309"></div>Incident
+  </button>
+  <button class="filter-btn" onclick="filterType('demande', this)">
+    <div class="filter-dot" style="background:#1e5a8e"></div>Demande
+  </button>
+  <button class="filter-btn" onclick="filterType('information', this)">
+    <div class="filter-dot" style="background:#2eb135"></div>Information
+  </button>
+</div>
+
+<!-- ══ LAYOUT PRINCIPAL ════════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-label">Produits Digitaux</div>
+    <!-- rempli par JS -->
+  </div>
+
+  <!-- CONTENU -->
+  <div class="content" id="content">
+    <div class="welcome">
+      <div class="welcome-emblem">📋</div>
+      <h2>Sélectionnez un produit</h2>
+      <p>Choisissez un produit dans la liste à gauche pour afficher les scénarios de prise en charge des requêtes et réclamations clients.</p>
+      <div class="welcome-hint">← 9 produits disponibles dans la barre latérale</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER ══════════════════════════════════════════════════════ -->
+<div class="app-footer">
+  <span>Orabank Togo</span> · Direction Banque Digitale · Ref. DBD-MAT-001 v1.0 · 2025 ·
+  Usage interne réseau agences — Document confidentiel
+</div>
+
+<script>
+// ─── PALETTE PRODUITS (couleurs Orabank) ───────────────────────────────────
+const productColors = {
+  debit:        '#00693e',
+  prepaid:      '#2eb135',
+  mobilebanking:'#8a697c',
+  whatsapp:     '#00693e',
+  internetbanking:'#1e5a8e',
+  agencybanking:'#8e684c',
+  appmobile:    '#2eb135',
+  tpe:          '#00693e',
+  ecommerce:    '#8a697c',
+};
+
+// ─── DATA ──────────────────────────────────────────────────────────────────
+const products = [
+  {
+    id: 'debit',
+    icon: '💳',
+    name: 'Carte de Débit',
+    desc: 'Cartes Visa/Mastercard débit liées aux comptes bancaires clients (classique, gold, platinum).',
+    scenarios: [
+      {
+        title: 'Carte non reçue / non livrée',
+        type: 'reclamation', sla: '48h', slaLevel: 'medium',
+        prerequis: ["Pièce d'identité valide", "Confirmation de la commande initiale", "Adresse de livraison enregistrée"],
+        verification: ["Vérifier le statut de production dans le CBS (émise / en transit)", "Vérifier si la carte est disponible au coffre agence", "Confirmer le canal de commande (agence / app)"],
+        n1: ["Si carte au coffre : remettre au client après vérification ID", "Enregistrer le ticket dans l'outil de suivi", "Informer le client du délai de re-livraison si en transit"],
+        n2: ["Si introuvable > 10 jours : escalader au BO Cartes", "Joindre le justificatif de demande initiale", "BO décide : renouvellement ou investigation"],
+        escalade: 'Carte non localisée sous 48h après vérification → BO Cartes obligatoire.'
+      },
+      {
+        title: 'Carte bloquée / refus de paiement',
+        type: 'incident', sla: 'Immédiat', slaLevel: 'fast',
+        prerequis: ["Carte physique ou numéro de carte", "Pièce d'identité", "Relevé de compte récent"],
+        verification: ["Statut de la carte dans CBS (bloquée / expirée / plafond)", "Transactions récentes", "Plafond journalier ou mensuel dépassé"],
+        n1: ["Erreur PIN : débloquer via CBS si procédure agence autorisée", "Plafond atteint : informer + ajuster si habilité", "Vérifier suspicion fraude avant déblocage"],
+        n2: ["Suspicion fraude : NE PAS débloquer, escalader BO Fraude immédiatement", "Erreur système : ticket urgent BO Cartes avec captures CBS"],
+        escalade: 'Suspicion fraude → NE PAS débloquer. Escalade BO Fraude immédiate.'
+      },
+      {
+        title: 'Transaction non reconnue / contestation',
+        type: 'reclamation', sla: '72h', slaLevel: 'medium',
+        prerequis: ["Relevé avec transaction contestée", "Date, montant, marchand", "Formulaire de contestation signé (F-CART-001)"],
+        verification: ["Authentification confirmée (3DS / PIN)", "Transaction en attente ou débitée", "Doublon ou erreur marchande"],
+        n1: ["Remettre et faire signer le formulaire de contestation", "Scanner + transmettre au BO Cartes avec relevés", "Informer client : délai réglementaire 45 jours max"],
+        n2: ["BO ouvre chargeback auprès du schème (Visa/Mastercard)", "Suivi dossier par BO uniquement", "Client contacté par BO pour résultat"],
+        escalade: 'Chargeback = Back Office exclusivement. Agence : réception du dossier uniquement.'
+      },
+      {
+        title: 'Renouvellement / remplacement de carte',
+        type: 'demande', sla: '5 jours ouvrés', slaLevel: 'medium',
+        prerequis: ["Pièce d'identité valide", "Motif : expiration / perte / vol / détérioration", "Déclaration perte/vol si applicable"],
+        verification: ["Date d'expiration de l'ancienne carte", "Si perte/vol : blocage déjà effectué ?", "Statut du compte (actif, sans incident)"],
+        n1: ["Bloquer immédiatement si perte/vol via CBS", "Saisir demande de renouvellement dans le CBS", "Informer le client du délai et du lieu de récupération"],
+        n2: ["Production et envoi par le Centre Cartes", "Agence réceptionne et prévient le client par SMS"],
+        escalade: 'Aucune escalade si procédure standard respectée.'
+      },
+      {
+        title: 'Modification de plafond',
+        type: 'demande', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Pièce d'identité", "Justificatif si augmentation significative", "Habilitation agence à modifier les plafonds"],
+        verification: ["Plafonds actuels dans le CBS", "Niveau de risque client (scoring)", "Plafonds maximaux autorisés par catégorie de carte"],
+        n1: ["Modification directe dans CBS si dans les limites autorisées", "Enregistrer et tracer dans le dossier client"],
+        n2: ["Dépassement des limites : demande écrite au BO Cartes", "Validation par le Responsable d'Agence requise"],
+        escalade: 'Modification hors plafond autorisé → BO Cartes + Responsable Agence.'
+      }
+    ]
+  },
+  {
+    id: 'prepaid',
+    icon: '🟩',
+    name: 'Carte Prépayée',
+    desc: 'Cartes prépayées physiques et virtuelles (programme BIN Sponsorship, partenaire EME/télécom).',
+    scenarios: [
+      {
+        title: 'Carte non activée après achat',
+        type: 'incident', sla: 'Immédiat – 4h max', slaLevel: 'fast',
+        prerequis: ["Numéro de carte ou reçu d'achat", "Pièce d'identité", "Date et agence d'achat"],
+        verification: ["Statut dans la plateforme prépayée (activée / en attente)", "KYC client validé côté EME", "Activation saisie correctement en agence"],
+        n1: ["Erreur de saisie : corriger et relancer l'activation", "KYC en attente : informer le client des documents requis", "Enregistrer le ticket"],
+        n2: ["Blocage technique : ticket urgent BO Digital / EME partenaire", "Ne jamais forcer une activation manuellement"],
+        escalade: 'Blocage technique ou KYC bloqué côté EME → BO Digital. Max 4h.'
+      },
+      {
+        title: 'Rechargement non crédité',
+        type: 'reclamation', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Reçu ou preuve de rechargement (SMS / reçu caisse)", "Numéro de carte prépayée", "Date et montant"],
+        verification: ["Transaction visible et en attente dans la plateforme", "Débit compte ou espèces effectué dans CBS", "Délai de traitement normal non encore écoulé (max 15 min)"],
+        n1: ["Informer le client si délai technique normal", "Si débit effectué mais solde non crédité : ouvrir dossier avec preuves"],
+        n2: ["Escalader au BO Digital avec justificatifs : ID transaction, montant, heure", "BO rapproche et crédite si erreur confirmée"],
+        escalade: 'Rechargement débité non crédité après 1h → BO Digital obligatoire.'
+      },
+      {
+        title: 'Perte ou vol de carte prépayée',
+        type: 'demande', sla: 'Blocage immédiat / 5j remplacement', slaLevel: 'medium',
+        prerequis: ["Pièce d'identité", "Déclaration de perte/vol (formulaire)", "Numéro de carte si disponible"],
+        verification: ["Localiser la carte via nom ou N° client", "Solde disponible restant", "Dernières transactions"],
+        n1: ["Bloquer immédiatement la carte dans la plateforme", "Enregistrer le solde à transférer", "Remettre formulaire de remplacement"],
+        n2: ["BO émet nouvelle carte et transfère le solde", "Client informé par SMS à réception"],
+        escalade: 'Blocage = immédiat agence. Transfert solde et remplacement = BO Cartes.'
+      },
+      {
+        title: 'Solde affiché incorrect',
+        type: 'incident', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Numéro de carte", "Capture d'écran ou relevé contesté", "Date de la dernière opération"],
+        verification: ["Solde dans la plateforme prépayée (référence officielle)", "Historique transactions 72h", "Rechargement ou débit en cours de traitement ?"],
+        n1: ["Expliquer si différence due à une opération en attente", "Anomalie confirmée : ouvrir ticket avec captures"],
+        n2: ["BO corrige le solde après vérification des logs", "Notification client par SMS après correction"],
+        escalade: 'Toute correction de solde = BO Digital. L\'agence ne modifie jamais les soldes.'
+      }
+    ]
+  },
+  {
+    id: 'mobilebanking',
+    icon: '📱',
+    name: 'Mobile Banking (B2W/W2B)',
+    desc: 'Transferts entre compte bancaire et wallet mobile. B2W : Bank to Wallet — W2B : Wallet to Bank. Opérateurs télécom partenaires.',
+    scenarios: [
+      {
+        title: 'Transfert B2W débité non crédité sur wallet',
+        type: 'reclamation', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Relevé avec preuve du débit bancaire", "Numéro de téléphone destinataire", "Date, heure et montant exact", "Preuve SMS éventuelle"],
+        verification: ["Débit effectif dans CBS", "Journal transactions Inter-op : ordre parti ?", "Réception côté opérateur vérifiée via switch"],
+        n1: ["Ouvrir ticket incident avec référence transaction CBS", "Informer client : délai résolution 24h", "Ne pas débiter de nouveau"],
+        n2: ["BO Digital contacte l'opérateur télécom partenaire", "Rapprochement inter-systèmes → crédit ou remboursement", "Client informé par SMS"],
+        escalade: 'Non-crédit persistant > 2h → BO Digital + opérateur partenaire.'
+      },
+      {
+        title: 'Transfert W2B crédité non reçu sur compte',
+        type: 'reclamation', sla: '24h', slaLevel: 'fast',
+        prerequis: ["SMS de confirmation de l'opérateur", "Numéro de compte bancaire destinataire", "Date, montant, ID transaction opérateur"],
+        verification: ["Crédit visible dans CBS (peut être en attente)", "ID transaction dans journal Inter-op", "Numéro de compte correct"],
+        n1: ["En attente < 15 min : informer client, délai normal", "Compte erroné : identifier qui est réellement crédité"],
+        n2: ["BO procède au reversement si erreur de compte", "Fraude suspectée : bloquer et alerter BO Fraude"],
+        escalade: 'Erreur de compte ou fraude → BO Fraude immédiatement.'
+      },
+      {
+        title: 'Service indisponible / erreur technique',
+        type: 'incident', sla: '4h information / résolution variable', slaLevel: 'medium',
+        prerequis: ["Message d'erreur exact", "Heure de début de l'erreur", "Opérateur télécom concerné"],
+        verification: ["Incident généralisé ou isolé ?", "Page de statut des systèmes", "Tester l'opération soi-même si possible"],
+        n1: ["Incident généralisé : informer le client, service temporairement interrompu", "Enregistrer le signalement", "Ne pas multiplier les tentatives"],
+        n2: ["Remonter au BO Digital et à l'équipe IT", "BO coordonne avec l'opérateur télécom"],
+        escalade: 'Incident généralisé → BO Digital + IT immédiatement.'
+      },
+      {
+        title: 'Plafond de transfert atteint',
+        type: 'information', sla: 'Immédiat', slaLevel: 'fast',
+        prerequis: ["Pièce d'identité", "Numéro de téléphone et compte concernés"],
+        verification: ["Limites réglementaires BCEAO applicables", "Cumul mensuel déjà effectué", "Catégorie client (particulier / commerçant)"],
+        n1: ["Informer clairement le client du plafond et du cumul utilisé", "Proposer alternatives : virement classique, autre canal"],
+        n2: ["Révision de plafond souhaitée : demande formelle BO Digital avec justificatifs"],
+        escalade: 'Révision de plafond → BO Digital sur demande formelle.'
+      }
+    ]
+  },
+  {
+    id: 'whatsapp',
+    icon: '💬',
+    name: 'WhatsApp Banking',
+    desc: 'Service bancaire conversationnel via WhatsApp : consultation de solde, mini-relevé et opérations simples.',
+    scenarios: [
+      {
+        title: 'Client ne reçoit pas les messages du bot',
+        type: 'incident', sla: '4h', slaLevel: 'fast',
+        prerequis: ["Numéro WhatsApp du client", "Opérateur télécom", "Date du dernier message reçu"],
+        verification: ["Numéro enregistré dans la plateforme WhatsApp Banking", "Client a-t-il bloqué le numéro de la banque ?", "Abonnement WhatsApp Business actif"],
+        n1: ["Vérifier que le client contacte le bon numéro", "Vérifier statut du compte dans la plateforme", "Guider client pour démarrer avec le mot-clé initial"],
+        n2: ["Problème technique plateforme : ticket BO Digital avec captures", "BO contacte le prestataire WhatsApp Business"],
+        escalade: 'Problème de plateforme → BO Digital. Résolution hors périmètre agence.'
+      },
+      {
+        title: 'Solde incorrect affiché via WhatsApp',
+        type: 'reclamation', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Capture d'écran du solde WhatsApp", "Relevé CBS pour comparaison", "Date et heure de la consultation"],
+        verification: ["Solde réel dans le CBS", "Comparer avec affichage WhatsApp", "Décalage de mise à jour (latence) ?"],
+        n1: ["Décalage < 1h : expliquer la latence de synchronisation", "Rassurer sur le solde réel CBS", "Enregistrer si anomalie persistante"],
+        n2: ["Décalage > 24h : escalader BO Digital pour correction flux"],
+        escalade: 'Écart de solde non justifié après 24h → BO Digital.'
+      },
+      {
+        title: 'Inscription / résiliation au service',
+        type: 'demande', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Pièce d'identité", "Numéro WhatsApp actif", "Numéro de compte à lier"],
+        verification: ["Compte actif et en règle", "Numéro non déjà enregistré sur un autre compte"],
+        n1: ["Enregistrer l'inscription dans la plateforme WhatsApp Banking", "Guider le client pour le premier démarrage"],
+        n2: ["Problème d'enregistrement : ticket BO Digital"],
+        escalade: 'Erreur d\'enregistrement → BO Digital.'
+      }
+    ]
+  },
+  {
+    id: 'internetbanking',
+    icon: '🌐',
+    name: 'Internet Banking',
+    desc: 'Portail web de banque en ligne : consultation, virements, gestion des comptes et paiements.',
+    scenarios: [
+      {
+        title: 'Accès bloqué / mot de passe oublié',
+        type: 'incident', sla: 'Immédiat', slaLevel: 'fast',
+        prerequis: ["Pièce d'identité valide", "Identifiant client ou N° de compte", "E-mail de récupération enregistré"],
+        verification: ["Statut du compte en ligne dans le portail admin", "Nombre de tentatives de connexion échouées", "Identité du client confirmée"],
+        n1: ["Réinitialiser le MDP via portail admin si habilité", "Envoyer lien de réinitialisation par e-mail", "Sensibiliser aux bonnes pratiques sécurité"],
+        n2: ["Blocage fraude suspectée : escalader BO Sécurité", "Levée de blocage après vérification approfondie"],
+        escalade: 'Suspicion fraude → BO Sécurité. Ne jamais débloquer sans validation.'
+      },
+      {
+        title: 'Virement en ligne non exécuté',
+        type: 'reclamation', sla: '48h', slaLevel: 'medium',
+        prerequis: ["Capture d'écran de la confirmation", "Référence du virement", "Comptes débiteur et créditeur"],
+        verification: ["Statut virement dans CBS (en attente / rejeté / exécuté)", "Fonds débités du compte ?", "Bénéficiaire en liste blanche"],
+        n1: ["En attente BO : informer le client du délai", "Rejeté : expliquer le motif (provision insuffisante, bénéficiaire invalide)"],
+        n2: ["Débité non crédité → BO Virements urgent", "BO rapproche et traite"],
+        escalade: 'Virement débité non crédité → BO Virements urgent.'
+      },
+      {
+        title: "Ajout d'un bénéficiaire impossible",
+        type: 'incident', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Identifiants du client en ligne", "IBAN / compte du bénéficiaire"],
+        verification: ["Reproduire l'erreur dans le portail", "Format du compte bénéficiaire valide ?", "OTP envoyé et reçu"],
+        n1: ["Guider le client dans la procédure d'ajout étape par étape", "Vérifier que le téléphone reçoit les OTP"],
+        n2: ["Bug technique persistant : ticket BO Digital / IT avec capture d'écran"],
+        escalade: 'Bug confirmé → BO Digital / IT.'
+      }
+    ]
+  },
+  {
+    id: 'agencybanking',
+    icon: '🏪',
+    name: 'Agency Banking',
+    desc: "Réseau d'agents agréés pour dépôts, retraits et paiements en dehors des agences bancaires.",
+    scenarios: [
+      {
+        title: "Retrait chez l'agent non traité / argent non remis",
+        type: 'reclamation', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Reçu de l'agent ou confirmation SMS de débit", "Nom et code de l'agent", "Date, montant, localisation"],
+        verification: ["Débit effectué dans CBS", "Statut transaction dans plateforme Agency Banking", "Agent identifié via son code système"],
+        n1: ["Enregistrer le dossier de réclamation", "Bloquer toute nouvelle opération sur la transaction concernée"],
+        n2: ["BO Agency Banking contacte l'agent + superviseur de zone", "Rapprochement caisse + remboursement si confirmé"],
+        escalade: 'Non-remise de fonds → BO Agency Banking urgent. Fraude suspectée → BO Fraude.'
+      },
+      {
+        title: 'Agent indisponible / hors ligne',
+        type: 'information', sla: 'Immédiat', slaLevel: 'fast',
+        prerequis: ["Nom ou localisation de l'agent signalé"],
+        verification: ["Statut de l'agent dans la plateforme (actif / suspendu / hors ligne)"],
+        n1: ["Orienter le client vers des agents alternatifs dans la zone", "Agent suspendu : ne pas y orienter le client"],
+        n2: ["Indisponibilité récurrente : signalement BO Agency Banking pour suivi"],
+        escalade: 'Signalement récurrent → BO Agency Banking.'
+      },
+      {
+        title: "Transaction refusée chez l'agent",
+        type: 'incident', sla: '4h', slaLevel: 'fast',
+        prerequis: ["Code erreur reçu par l'agent", "Numéro du compte client", "Montant de la transaction tentée"],
+        verification: ["Statut et solde du compte dans CBS", "Agent a atteint son plafond journalier ?", "Service disponible pour ce type de compte ?"],
+        n1: ["Solde insuffisant : informer le client", "Plafond agent atteint : orienter vers autre agent ou agence", "Erreur système : enregistrer le signalement"],
+        n2: ["Erreur système persistante → BO Digital + IT"],
+        escalade: 'Erreur système → BO Digital. Plafond agent → BO Agency Banking.'
+      }
+    ]
+  },
+  {
+    id: 'appmobile',
+    icon: '📲',
+    name: 'Application Mobile',
+    desc: 'Application bancaire Orabank : gestion du compte, virements, paiements et services digitaux.',
+    scenarios: [
+      {
+        title: "Impossible de télécharger / installer l'application",
+        type: 'information', sla: 'Immédiat', slaLevel: 'fast',
+        prerequis: ["Modèle et version du téléphone", "Système d'exploitation (Android / iOS)", "Version OS du client"],
+        verification: ["Compatibilité OS avec la version actuelle de l'app", "Application disponible sur le store de la région"],
+        n1: ["Guider vers le lien officiel de téléchargement", "Vérifier l'espace de stockage disponible", "Communiquer les prérequis techniques minimum"],
+        n2: ["Indisponible sur le store : signaler au BO Digital / équipe App"],
+        escalade: 'Application indisponible sur store → BO Digital et équipe produit App.'
+      },
+      {
+        title: 'Connexion impossible (biométrie / code PIN)',
+        type: 'incident', sla: 'Immédiat', slaLevel: 'fast',
+        prerequis: ["Pièce d'identité", "Numéro de compte ou identifiant client"],
+        verification: ["Compte actif dans CBS", "Compte en ligne (Internet Banking) actif", "Pb biométrie, PIN ou compte bloqué ?"],
+        n1: ["Guider réinitialisation PIN in-app si disponible", "Proposer réinitialisation via Internet Banking"],
+        n2: ["Compte bloqué : ticket BO Digital pour déblocage après vérification ID"],
+        escalade: 'Blocage sécurité → BO Digital. Jamais de déblocage sans confirmation identité.'
+      },
+      {
+        title: 'Notifications non reçues',
+        type: 'incident', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Version de l'app installée", "Paramètres de notification du téléphone", "Version OS"],
+        verification: ["Notifications activées dans les paramètres du téléphone ?", "Application à jour ?"],
+        n1: ["Guider activation des notifications", "Guider la mise à jour de l'application"],
+        n2: ["Bug confirmé sur version spécifique : signaler à l'équipe App via BO Digital"],
+        escalade: 'Bug de version → BO Digital / équipe App.'
+      },
+      {
+        title: 'Virement in-app non exécuté',
+        type: 'reclamation', sla: '48h', slaLevel: 'medium',
+        prerequis: ["Capture d'écran de la confirmation in-app", "Référence de la transaction", "Comptes débiteur et créditeur"],
+        verification: ["Statut du virement dans CBS", "Compte débité ?"],
+        n1: ["En attente : informer le client du délai standard", "Rejeté : expliquer le motif et corriger si possible"],
+        n2: ["Débité non crédité → BO Virements urgent avec toutes les références"],
+        escalade: 'Virement débité non crédité → BO Virements urgent.'
+      }
+    ]
+  },
+  {
+    id: 'tpe',
+    icon: '🖥️',
+    name: 'TPE – Terminal de Paiement',
+    desc: 'Terminaux de paiement électronique déployés chez les commerçants partenaires.',
+    scenarios: [
+      {
+        title: 'TPE hors service / éteint',
+        type: 'incident', sla: '4h ouvrées', slaLevel: 'medium',
+        prerequis: ["Numéro de série du TPE (sur l'appareil)", "Nom et localisation du commerçant", "Description du problème"],
+        verification: ["TPE enregistré et actif dans la plateforme de gestion", "Panne réseau signalée dans la zone", "Batterie / alimentation en cause"],
+        n1: ["Guider le commerçant pour redémarrer le TPE (procédure standard)", "Vérifier connexion réseau (SIM / WiFi)", "Enregistrer le signalement"],
+        n2: ["Non résolu après redémarrage : ticket BO Monétique", "Intervention technicien (SLA 24–48h ouvrées)"],
+        escalade: 'Non-résolution après redémarrage → BO Monétique pour intervention terrain.'
+      },
+      {
+        title: 'Transaction approuvée / ticket imprimé 2 fois',
+        type: 'incident', sla: '24h', slaLevel: 'fast',
+        prerequis: ["Les 2 tickets papier originaux", "N° de série du TPE", "Relevé client montrant les débits"],
+        verification: ["CBS : 1 ou 2 débits effectifs ?", "Logs de transaction du TPE (N° séquentiels)"],
+        n1: ["Rassurer : 2 tickets ≠ forcément 2 débits", "Vérifier CBS immédiatement et informer le client"],
+        n2: ["Double débit confirmé → chargeback BO Monétique urgent", "Remboursement traité par BO"],
+        escalade: 'Double débit confirmé → BO Monétique chargeback immédiat.'
+      },
+      {
+        title: 'Commerçant ne reçoit pas ses remises',
+        type: 'reclamation', sla: '48h', slaLevel: 'medium',
+        prerequis: ["Contrat TPE du commerçant", "Relevé bancaire du compte de remise", "Période concernée et montants attendus"],
+        verification: ["Paramètres de remise dans la plateforme Monétique", "Compte de remise bien renseigné", "Transactions bien réconciliées"],
+        n1: ["Confirmer les montants et dates de remise contractuelles", "Conditions (montant minimum) remplies ?"],
+        n2: ["Remise non créditée à date contractuelle : dossier BO Monétique"],
+        escalade: 'Remise non créditée → BO Monétique.'
+      },
+      {
+        title: 'Commerçant demande un nouveau TPE / remplacement',
+        type: 'demande', sla: '5 jours ouvrés', slaLevel: 'medium',
+        prerequis: ["Contrat commerçant à jour", "KYC commerçant valide", "Adresse d'installation"],
+        verification: ["Statut contractuel du commerçant", "Ancien TPE à récupérer si remplacement"],
+        n1: ["Saisir la demande dans le système de gestion du parc TPE", "Informer le commerçant du délai et des conditions"],
+        n2: ["Déploiement et paramétrage par l'équipe Monétique / technicien partenaire"],
+        escalade: 'Aucune escalade si procédure standard. Urgence → BO Monétique.'
+      }
+    ]
+  },
+  {
+    id: 'ecommerce',
+    icon: '🛒',
+    name: 'E-Commerce / PayFac',
+    desc: "Acceptation de paiement en ligne : marchands directs et agrégateurs PSP. Cadre : Instruction BCEAO n°001-01-2024.",
+    scenarios: [
+      {
+        title: 'Marchand ne reçoit pas les paiements en ligne',
+        type: 'reclamation', sla: '48h', slaLevel: 'medium',
+        prerequis: ["Contrat e-Commerce du marchand", "Compte de règlement actif", "Relevé des transactions en ligne"],
+        verification: ["Marchand actif dans la plateforme e-Commerce", "Transactions au statut capturé/settlé", "Cycle de règlement contractuel (J+1, J+2...)"],
+        n1: ["Confirmer le calendrier de règlement contractuel", "Seuil minimum de règlement atteint ?"],
+        n2: ["Règlement en retard confirmé : dossier BO E-Commerce + extraction transactions", "BO coordonne avec le processeur"],
+        escalade: 'Règlement non reçu à date → BO E-Commerce.'
+      },
+      {
+        title: 'Intégration API / 3DS en erreur',
+        type: 'incident', sla: '4h (critique)', slaLevel: 'fast',
+        prerequis: ["Code d'erreur exact retourné par l'API", "Environnement (production / test)", "Log technique si disponible"],
+        verification: ["Statut de la plateforme e-Commerce (incidents en cours)", "Clé API active et non expirée", "3DS correctement configuré"],
+        n1: ["Orienter vers documentation technique et support dédié", "Vérifier validité des credentials API"],
+        n2: ["Incident plateforme : BO E-Commerce + IT urgence", "Pb intégration marchand : équipe technique marchande + BO E-Commerce"],
+        escalade: 'Incident production → BO E-Commerce + IT. SLA critique 4h.'
+      },
+      {
+        title: "Enrôlement d'un agrégateur PSP (PayFac)",
+        type: 'demande', sla: '15 jours ouvrés', slaLevel: 'slow',
+        prerequis: ["Agrément PSP valide (Instruction BCEAO n°001-01-2024)", "Dossier KYC complet de l'agrégateur", "Liste des sous-marchands et activités couvertes", "Documentation technique d'intégration"],
+        verification: ["Validité et authenticité de l'agrément PSP BCEAO", "Conformité modèle économique (règles Visa/Mastercard PayFac)", "Documents de gouvernance (statuts, dirigeants)"],
+        n1: ["Réceptionner le dossier et accuser réception formellement", "Vérifier la complétude selon la checklist PayFac", "Transmettre au BO E-Commerce / Compliance"],
+        n2: ["Instruction par Compliance + BO E-Commerce", "Validation finale Direction + Schèmes (si requis)", "Signature convention + paramétrage technique"],
+        escalade: "Dossier incomplet → retourner à l'agrégateur avec liste des manques. Instruction = BO + Compliance exclusivement."
+      },
+      {
+        title: 'Client conteste un paiement en ligne (chargeback)',
+        type: 'reclamation', sla: '72h ouverture dossier', slaLevel: 'medium',
+        prerequis: ["Relevé client avec transaction contestée", "Formulaire de contestation signé", "Date, montant, nom du marchand en ligne"],
+        verification: ["Transaction bien débitée (pas en attente)", "Livraison ou service rendu ?", "Marchand a émis un remboursement ?"],
+        n1: ["Recueillir et faire signer le formulaire de contestation", "Transmettre au BO Cartes / E-Commerce avec toutes les preuves"],
+        n2: ["BO ouvre chargeback (Visa/MC) — délai max 45 jours", "Client informé du résultat par BO"],
+        escalade: 'Chargeback e-commerce = BO Cartes / E-Commerce. Agence : réception du dossier uniquement.'
+      }
+    ]
+  }
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let currentProduct = null;
+let currentFilter  = 'all';
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = '<div class="sidebar-label">Produits Digitaux</div>';
+  products.forEach(p => {
+    const col = productColors[p.id] || '#00693e';
+    const div = document.createElement('div');
+    div.className = 'sidebar-section';
+    div.innerHTML = `
+      <div class="product-item ${currentProduct === p.id ? 'selected' : ''}" onclick="selectProduct('${p.id}')">
+        <div class="product-icon">${p.icon}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-count">${p.scenarios.length}</div>
+      </div>`;
+    sidebar.appendChild(div);
+  });
+}
+
+// ─── SELECT PRODUCT ──────────────────────────────────────────────────────
+function selectProduct(id) {
+  currentProduct = id;
+  renderSidebar();
+  renderContent();
+}
+
+// ─── FILTER TYPE ─────────────────────────────────────────────────────────
+function filterType(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (currentProduct) renderContent();
+}
+
+// ─── SEARCH ──────────────────────────────────────────────────────────────
+function filterAll() {
+  if (currentProduct) renderContent();
+}
+
+// ─── RENDER CONTENT ──────────────────────────────────────────────────────
+function renderContent() {
+  const product = products.find(p => p.id === currentProduct);
+  if (!product) return;
+  const content = document.getElementById('content');
+  const search  = document.getElementById('searchInput').value.toLowerCase();
+
+  const filtered = product.scenarios.filter(s => {
+    const matchType   = currentFilter === 'all' || s.type === currentFilter;
+    const matchSearch = !search ||
+      s.title.toLowerCase().includes(search) ||
+      s.prerequis.join(' ').toLowerCase().includes(search) ||
+      s.verification.join(' ').toLowerCase().includes(search) ||
+      s.n1.join(' ').toLowerCase().includes(search) ||
+      (s.n2 && s.n2.join(' ').toLowerCase().includes(search));
+    return matchType && matchSearch;
+  });
+
+  const typeLabels = {
+    reclamation: '<span class="scenario-type type-reclamation">Réclamation</span>',
+    demande:     '<span class="scenario-type type-demande">Demande</span>',
+    incident:    '<span class="scenario-type type-incident">Incident</span>',
+    information: '<span class="scenario-type type-information">Information</span>',
+  };
+
+  const rc = product.scenarios.filter(s=>s.type==='reclamation').length;
+  const ic = product.scenarios.filter(s=>s.type==='incident').length;
+  const dc = product.scenarios.filter(s=>s.type==='demande').length;
+  const fc = product.scenarios.filter(s=>s.type==='information').length;
+
+  content.innerHTML = `
+    <div class="product-header">
+      <div class="product-header-icon">${product.icon}</div>
+      <div>
+        <div class="product-title">${product.name}</div>
+        <div class="product-desc">${product.desc}</div>
+      </div>
+      <div class="quick-stats">
+        ${rc ? `<span class="stat-pill tag-reclamation">🔴 ${rc} Récl.</span>` : ''}
+        ${ic ? `<span class="stat-pill tag-incident">🟡 ${ic} Incid.</span>` : ''}
+        ${dc ? `<span class="stat-pill tag-demande">🔵 ${dc} Dem.</span>` : ''}
+        ${fc ? `<span class="stat-pill tag-info">🟢 ${fc} Info</span>` : ''}
+      </div>
+    </div>
+    <div class="scenarios-grid" id="scenariosGrid"></div>`;
+
+  const grid = document.getElementById('scenariosGrid');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results">Aucun scénario trouvé pour ce filtre ou cette recherche.</div>';
+    return;
+  }
+
+  filtered.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'scenario-card';
+    card.innerHTML = `
+      <div class="scenario-header" onclick="toggleCard(this)">
+        ${typeLabels[s.type]}
+        <div class="scenario-title">${s.title}</div>
+        <span class="sla-badge sla-${s.slaLevel}">⏱ ${s.sla}</span>
+        <span class="chevron">›</span>
+      </div>
+      <div class="scenario-body">
+        <div class="steps-row">
+          <div class="step-block prereqs">
+            <div class="step-label"><div class="step-dot"></div>Prérequis</div>
+            <ul>${s.prerequis.map(x=>`<li>${x}</li>`).join('')}</ul>
+          </div>
+          <div class="step-block verif">
+            <div class="step-label"><div class="step-dot"></div>Vérifications préalables</div>
+            <ul>${s.verification.map(x=>`<li>${x}</li>`).join('')}</ul>
+          </div>
+          <div class="step-block n1">
+            <div class="step-label"><div class="step-dot"></div>Traitement N1 — Agence</div>
+            <ul>${s.n1.map(x=>`<li>${x}</li>`).join('')}</ul>
+          </div>
+          <div class="step-block n2">
+            <div class="step-label"><div class="step-dot"></div>Traitement N2 — Back Office</div>
+            <ul>${(s.n2||['Traitement N1 suffisant']).map(x=>`<li>${x}</li>`).join('')}</ul>
+          </div>
+        </div>
+        ${s.escalade ? `<div class="escalade-note">⚠️ <span><strong>Règle d'escalade :</strong> ${s.escalade}</span></div>` : ''}
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ─── TOGGLE CARD ─────────────────────────────────────────────────────────
+function toggleCard(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+renderSidebar();
+</script>
+</body>
+</html>
